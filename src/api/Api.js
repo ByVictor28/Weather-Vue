@@ -4,9 +4,9 @@ const ApiWeather = axios.create({
   baseURL: 'https://weathernod.herokuapp.com',
 });
 
-export const weatherByCity =async (city) =>{
+export const weatherByCity =async (city,units) =>{
   try{
-    const {data} =  await ApiWeather.get(`/city?city=${city}&units=metric`)
+    const {data} =  await ApiWeather.get(`/city?city=${city}&units=${units==="C"?"metric":"imperial"}`)
     console.log(data)
     return data
 
