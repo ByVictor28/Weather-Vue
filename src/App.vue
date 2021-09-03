@@ -3,7 +3,7 @@
     <div class="grid grid-cols-12 bg-red-900 min-h-screen">
       <!-- SIDE BAR -->
       <div side-var class="h-full w-full px-10 col-span-12 md:col-span-4 lg:col-span-3 bg-indigo-200 dark:bg-gray-800 flex flex-col">
-        <Navbar @change="changeTheme" :isDark="theme"/>
+        <Navbar @change="changeTheme" :dark="themeDark" @search="getWeather"/>
 
         <!-- CONTENT -->
         <spin v-if="loading"/>
@@ -33,8 +33,11 @@
         </div>
 
         <!-- HIGHLIGHTS -->
-        <h3>Today's highlights</h3>
+        <h3 v-if="!loading">Today's highlights</h3>
         <spin v-if="loading"/>
+        <div v-else-if="!loading && !weather">
+          <h3 class=" font-bold text-6xl">There is no data to show</h3>
+        </div>
         <div v-else-if="!loading && weather" class="flex gap-5 justify-around flex-wrap mt-2">
           
           <div class="flex flex-col justify-around gap-2 items-center w-48 py-6 bg-indigo-200 dark:bg-gray-800">
@@ -82,7 +85,7 @@ export default {
   },
   data(){
     return {
-      themeDark:false,
+      themeDark:true,
       weather:null,
       loading:true
     }
@@ -104,13 +107,18 @@ export default {
     }
   },
   methods:{
+    async getWeather(city){
+
+      this.loading = true
+      this.weather =await weatherByCity(city)
+      this.loading = false
+    },
     changeTheme(){
       this.themeDark =  !this.themeDark
     }
   },
-  async created(){
-    this.weather =await weatherByCity("London")
-    this.loading = false
+  created(){
+    this.getWeather("London")
   }
 }
 </script>
